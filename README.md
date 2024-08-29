@@ -1,3 +1,6 @@
+# 简介
+1. fork from https://github.com/facundoolano/google-play-scraper/
+2. 爬数据转成csv
 
 # install nvm node
 1. nvm install 16
