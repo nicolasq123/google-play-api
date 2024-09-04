@@ -2,7 +2,9 @@ import csv
 import json
 import requests
 
-NUM = 1000
+NUM = 1000 # 200
+COUNTRIES = ['id', 'in', 'ph']
+CATEGORIES = ['FINANCE', 'GAME_CASINO', 'GAME_CARD', 'SHOPPING', 'SOCIAL']
 
 def req(country, category):
     u = 'http://127.0.0.1:3000/api/apps/'
@@ -34,17 +36,15 @@ def req(country, category):
 # }
 
 def main():
-    countries = ['id', 'in', 'ph']
-    categories = ['FINANCE', 'GAME_CASINO', 'GAME_CARD', 'SHOPPING', 'SOCIAL']
+    countries = COUNTRIES
+    categories = CATEGORIES
     for c in countries:
         for cate in categories:
-            if c == 'id' and cate == 'FINANCE':
-                continue
-            getdata(c, cate)
+            get_data(c, cate)
 
-def getdata(country='id', category='GAME_CARD'):
+def get_data(country, category):
     data = req(country, category)
-    print("get the data")
+    print("get the data", country, category, len(data))
     transformed_data = []
     for item in data:
         histogram_all = sum([int(i) for i in item.get("histogram", {}).values()])
