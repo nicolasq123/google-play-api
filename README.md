@@ -1,3 +1,18 @@
+# 简介
+1. fork from https://github.com/facundoolano/google-play-scraper/
+2. 爬数据转成csv
+
+# install nvm node
+1. nvm install 16
+2. nvm use 16
+3. npm install
+4. npm start
+
+# 运行python脚本爬数据保存到csv
+
+python3 main.py
+
+
 # google-play-api
 
 Turns [google-play-scraper](https://github.com/facundoolano/google-play-scraper/) into a RESTful API.
