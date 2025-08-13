@@ -2,11 +2,20 @@
 1. fork from https://github.com/facundoolano/google-play-scraper/
 2. 爬数据转成csv
 
-# install nvm node
+# Quick Start
+## 启动google-play-scraper-api
+#### Docker 
+1. make -B run logs
+
+#### 本地
+###### install nvm node
 1. nvm install 16
 2. nvm use 16
 3. npm install
 4. npm start
+
+## 开始爬数据并生成csv
+1. python3 main.py --craw_type topn --countries us --categories FINANCE SHOPPING --num 200
 
 # 运行python脚本爬数据保存到csv
 

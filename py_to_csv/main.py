@@ -275,7 +275,7 @@ def main(args):
     raise Exception("craw_typ error")
 
 """
-usage: python3 main.py --countries us --categories FINANCE SHOPPING --num 200
+usage: python3 main.py --craw_type topn --countries us --categories FINANCE SHOPPING --num 200
 usage: python3 main.py --craw_typ pkgs
 usage: python3 main.py --craw_typ pkgs
 """
