@@ -15,7 +15,7 @@
 4. npm start
 
 ## 开始爬数据并生成csv
-1. python3 main.py --craw_type topn --countries us --categories FINANCE SHOPPING --num 200
+1. python3 main.py --craw_typ topn --countries us --categories FINANCE SHOPPING --num 200
 
 # 运行python脚本爬数据保存到csv
 
