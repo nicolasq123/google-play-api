@@ -1,17 +1,7 @@
 import csv
 import requests
-from conf import CRAW_GOOGLE_STORE_URL
+from conf import CRAW_URL, TARGET_DATA
 
-
-# country-lang-search
-TargetData = [
-    ['id', 'id', 'Pinjaman'],
-    ['ng', 'en', 'loan'],
-    ['in', 'en', 'loan'],
-    ['th', 'th', 'เงินกู้'],
-    ['vn', 'vi', 'khoản vay'],
-    ['br', 'pt', 'empréstimo'],
-]
 
 
 """
@@ -20,11 +10,11 @@ TargetData = [
 """
 class CrawSearchGP():
     def __init__(self):
-        self.store_url = CRAW_GOOGLE_STORE_URL
+        self.store_url = CRAW_URL
         self.fname = 'appstore.csv'
 
     def run(self):
-        for i in TargetData:
+        for i in TARGET_DATA:
             gl, hl, search =i[0], i[1], i[2]
             data = self.req(gl, hl, search)
             results = data['results']
@@ -114,6 +104,3 @@ class CrawSearchGP():
             print("req exception: ", u, params, e)
             return None
 
-if __name__ == "__main__":
-    craw = CrawSearchGP()
-    craw.run()

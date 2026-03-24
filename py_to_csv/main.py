@@ -2,22 +2,17 @@ import csv
 import requests
 import argparse
 import time
-
-NUM = 200
-COUNTRIES = ['id', 'in', 'ph']
-CATEGORIES = ['FINANCE', 'GAME_CASINO', 'GAME_CARD', 'SHOPPING', 'SOCIAL']
-CRAW_URL = 'http://127.0.0.1:3300'
-
-CRAW_APPSTORE_URL = 'http://127.0.0.1:3301'
-
-PKGS = [
-"com.upswing.slots",
-"com.sdu.didi.psnger",
-]
-
-APPSTORE_APPS = [
-    "314716233",
-]
+import os
+from craw_search import CrawSearchGP
+from conf import (
+    NUM,
+    COUNTRIES,
+    CATEGORIES,
+    CRAW_URL,
+    CRAW_APPSTORE_URL,
+    PKGS,
+    APPSTORE_APPS,
+)
 
 # kv = {
 #     "app_name": "title",
@@ -78,11 +73,15 @@ class CrawTopN():
                 "gplay_url": "https://play.google.com/store/apps/details?id={}&gl={}".format(item.get("appId", ""), country),
             })
 
+        if not transformed_data:
+            print("no data to write:", country, category)
+            return
+
         # 接下来，我们将数据写入CSV文件
         with open('{}-{}-output.csv'.format(category, country), 'w', newline='', encoding='utf-8') as csvfile:
             # 创建一个csv.DictWriter对象，它接受一个文件对象和一个字段名列表
             # 注意：字段名列表需要包含所有将要写入的列名
-            fieldnames = transformed_data[0].keys().sort()
+            fieldnames = sorted(transformed_data[0].keys())
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
             # 写入标题行
@@ -125,6 +124,7 @@ class CrawPkgs():
             "installs": "installs",
             "developerWebsite": "developerWebsite",
             "developerEmail": "developerEmail",
+            "developerLegalEmail": "developerLegalEmail",
             "developerLegalName": "developerLegalName",
             "address": "developerLegalAddress",
             "phone": "developerLegalPhoneNumber",
@@ -135,14 +135,22 @@ class CrawPkgs():
     def get_data(self, pkgs):
         data = []
         failed_pkgs = []
+        total = len(pkgs)
         for i, pkg in enumerate(pkgs):
             r = self.req(pkg)
             time.sleep(1)
             if not r:
                 failed_pkgs.append(pkg)
-                continue
-            data.append(r)
-            print("req success: ", i, pkg, len(pkgs))
+            else:
+                data.append(r)
+
+            processed = i + 1
+            if processed % 10 == 0 or processed == total:
+                print(
+                    "progress: {}/{} (success: {}, failed: {})".format(
+                        processed, total, len(data), len(failed_pkgs)
+                    )
+                )
         
         print("failed pkgs: ", failed_pkgs)
 
@@ -166,8 +174,13 @@ class CrawPkgs():
             tmp["gplay_url"] = "https://play.google.com/store/apps/details?id={}".format(item.get("appId", ""))
             transformed_data.append(tmp)
 
+        if not transformed_data:
+            print("no valid package data, skip csv write")
+            return
+
         # 接下来，我们将数据写入CSV文件
         fname = "./csv/android.csv"
+        os.makedirs(os.path.dirname(fname), exist_ok=True)
         with open(fname, 'w', newline='', encoding='utf-8') as csvfile:
             # 创建一个csv.DictWriter对象，它接受一个文件对象和一个字段名列表
             # 注意：字段名列表需要包含所有将要写入的列名
@@ -281,6 +294,11 @@ def main(args):
         craw = CrawAppStorePkgs()
         craw.run(args.appstore_pkgs)
         return
+    
+    if args.craw_typ == "craw_search":
+        craw = CrawSearchGP()
+        craw.run()
+        return
 
     raise Exception("craw_typ error")
 
@@ -289,6 +307,7 @@ usage: python3 main.py --craw_typ topn --countries us --categories FINANCE SHOPP
 usage: python3 main.py --craw_typ pkgs
 usage: python3 main.py --craw_typ pkgs
 """
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Scrape Google Play data')
     parser.add_argument('--countries', nargs='+', help='List of countries to scrape', default=COUNTRIES)
