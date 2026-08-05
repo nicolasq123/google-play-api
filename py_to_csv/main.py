@@ -107,11 +107,16 @@ class CrawTopN():
 
 
 class CrawPkgs():
-    def run(self, pkgs=[]):
+    def __init__(self, pkgs=[], country="us", lang="en"):
         if not pkgs:
             raise Exception("params pkgs error")
 
-        self.get_data(pkgs)
+        self.pkgs = pkgs
+        self.country = country
+        self.lang = lang
+
+    def run(self):
+        self.get_data(self.pkgs)
     
     def cols_mapping(self, item):
         # key : ours col
@@ -193,12 +198,13 @@ class CrawPkgs():
             for row in transformed_data:
                 writer.writerow(row)
 
-    def req(self, pkg, country=""):
+    def req(self, pkg):
         try:
             u = CRAW_URL + '/api/apps/{}/'.format(pkg)
             params = {
                 "fullDetail": "true",
-                "country": "us",
+                "country": self.country,
+                "lang": self.lang,
             }
             res = requests.get(u, params=params)
             if res.status_code != 200:
@@ -286,8 +292,8 @@ def main(args):
         return
     
     if args.craw_typ == "pkgs":
-        craw = CrawPkgs()
-        craw.run(args.pkgs)
+        craw = CrawPkgs(args.pkgs, country="us", lang="en")
+        craw.run()
         return
 
     if args.craw_typ == "appstore_pkgs":
@@ -305,7 +311,7 @@ def main(args):
 """
 usage: python3 main.py --craw_typ topn --countries us --categories FINANCE SHOPPING --num 200
 usage: python3 main.py --craw_typ pkgs
-usage: python3 main.py --craw_typ pkgs
+usage: python3 main.py --craw_typ appstore_pkgs
 """
 
 if __name__ == "__main__":

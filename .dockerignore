@@ -2,3 +2,6 @@ node_modules
 Dockerfile
 Makefile
 .dockerignore
+*.py
+py_to_csv
+README.md

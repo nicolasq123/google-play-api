@@ -5,7 +5,8 @@
   "type": "module",
   "exports": "./server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "postinstall": "node scripts/patch-gplay-search.js"
   },
   "author": "Facundo Olano",
   "license": "ISC",
@@ -15,7 +16,7 @@
   },
   "dependencies": {
     "express": "^4.17.1",
-    "google-play-scraper": "^10.0.0"
+    "google-play-scraper": "^10.1.2"
   },
   "devDependencies": {
     "eslint": "^7.32.0",
