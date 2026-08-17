@@ -107,13 +107,14 @@ class CrawTopN():
 
 
 class CrawPkgs():
-    def __init__(self, pkgs=[], country="us", lang="en"):
+    def __init__(self, pkgs=[], country="us", lang="en", fname=""):
         if not pkgs:
             raise Exception("params pkgs error")
 
         self.pkgs = pkgs
         self.country = country
         self.lang = lang
+        self.fname = fname or "./csv/android.csv"
 
     def run(self):
         self.get_data(self.pkgs)
@@ -177,6 +178,9 @@ class CrawPkgs():
             tmp["score4_num"] = item.get("histogram", {}).get("4", 0)
             tmp["score5_num"] = item.get("histogram", {}).get("5", 0)
             tmp["gplay_url"] = "https://play.google.com/store/apps/details?id={}".format(item.get("appId", ""))
+            if not self.country:
+                tmp["gplay_url"] = "https://play.google.com/store/apps/details?id={}&gl={}&hl={}".format(item.get("appId", ""), self.country, self.lang)
+
             transformed_data.append(tmp)
 
         if not transformed_data:
@@ -184,7 +188,7 @@ class CrawPkgs():
             return
 
         # 接下来，我们将数据写入CSV文件
-        fname = "./csv/android.csv"
+        fname = self.fname
         os.makedirs(os.path.dirname(fname), exist_ok=True)
         with open(fname, 'w', newline='', encoding='utf-8') as csvfile:
             # 创建一个csv.DictWriter对象，它接受一个文件对象和一个字段名列表
@@ -292,7 +296,7 @@ def main(args):
         return
     
     if args.craw_typ == "pkgs":
-        craw = CrawPkgs(args.pkgs, country="us", lang="en")
+        craw = CrawPkgs(args.pkgs, country=args.country or "us", lang="en", fname=args.fname)
         craw.run()
         return
 
@@ -310,7 +314,7 @@ def main(args):
 
 """
 usage: python3 main.py --craw_typ topn --countries us --categories FINANCE SHOPPING --num 200
-usage: python3 main.py --craw_typ pkgs
+usage: python3 main.py --craw_typ pkgs --fname "./csv/america_q3.csv"
 usage: python3 main.py --craw_typ appstore_pkgs
 """
 
@@ -322,6 +326,8 @@ if __name__ == "__main__":
     parser.add_argument("--craw_typ", type=str, help="craw type", default="topn")
     parser.add_argument("--pkgs", nargs='+', help='List of pkgs', default=PKGS)
     parser.add_argument("--appstore_pkgs", nargs='+', help='List of pkgs', default=APPSTORE_APPS)
+    parser.add_argument("--fname", type=str, help="file name", default="")
+    parser.add_argument("--country", type=str, help="file name", default="")
 
     args = parser.parse_args()
     print("args: ", args)

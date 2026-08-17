@@ -5,7 +5,7 @@ CRAW_URL = 'http://127.0.0.1:3300'
 CRAW_APPSTORE_URL = 'http://127.0.0.1:3301'
 
 PKGS = [
-'tiktok.com'
+'tiktok.com',
 ]
 
 APPSTORE_APPS = [
