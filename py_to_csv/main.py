@@ -178,7 +178,7 @@ class CrawPkgs():
             tmp["score4_num"] = item.get("histogram", {}).get("4", 0)
             tmp["score5_num"] = item.get("histogram", {}).get("5", 0)
             tmp["gplay_url"] = "https://play.google.com/store/apps/details?id={}".format(item.get("appId", ""))
-            if not self.country:
+            if self.country:
                 tmp["gplay_url"] = "https://play.google.com/store/apps/details?id={}&gl={}&hl={}".format(item.get("appId", ""), self.country, self.lang)
 
             transformed_data.append(tmp)
